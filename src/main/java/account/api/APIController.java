@@ -1,5 +1,6 @@
 package account.api;
 
+import account.LocalPaths;
 import account.exception.*;
 import account.model.StatusDTO;
 import account.model.event.SecurityEvent;
@@ -17,6 +18,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +33,7 @@ public class APIController {
     private final UserRoleFabric userRoleFabric;
 
     @Autowired
-    public APIController(UserService userService, SecurityEventService securityEventService, LoginAttemptService loginAttemptService, PasswordEncoder encoder, UserRoleFabric userRoleFabric) {
+    public APIController(UserService userService, SecurityEventService securityEventService, LoginAttemptService loginAttemptService, UserRoleFabric userRoleFabric) {
         this.userService = userService;
         this.securityEventService = securityEventService;
         this.loginAttemptService = loginAttemptService;
@@ -78,8 +82,7 @@ public class APIController {
         if (accessDTO.getOperation() == UserOperation.UNLOCK) {
             loginAttemptService.clearFailedLogins(accessDTO.getUserEmail().toLowerCase());
         }
-        StatusDTO statusDTO = userService.changeUserAccess(accessDTO);
-        return statusDTO;
+        return userService.changeUserAccess(accessDTO);
     }
 
     @GetMapping("api/security/events")
@@ -91,5 +94,17 @@ public class APIController {
     public StatusDTO deleteAllEvents() {
         securityEventService.deleteAll();
         return new StatusDTO("All events was cleared)");
+    }
+
+    @GetMapping(value = "api/doc", produces = "text/html")
+    public ResponseEntity<String> getOpenApiDoc() {
+        Path htmlFilePath = Path.of(LocalPaths.OPEN_API_DOC);
+        String htmlContent;
+        try {
+            htmlContent = Files.readString(htmlFilePath);
+        } catch (IOException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(htmlContent, HttpStatus.OK);
     }
 }

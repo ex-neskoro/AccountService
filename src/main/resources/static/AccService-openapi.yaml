@@ -1,7 +1,7 @@
 openapi: "3.0.3"
 info:
   title: "Account Service API"
-  description: "This is a OpenAPI documentation for AccService API by ex.neskoro"
+  description: "This is a OpenAPI documentation for AccService API by [ex.neskoro](https://github.com/ex-neskoro)"
   version: "1.0.0"
 servers:
   - url: "https://localhost:28852"
@@ -308,6 +308,16 @@ paths:
             'application/json':
               schema:
                 $ref: "#/components/schemas/Error"
+  /api/doc:
+      get:
+        summary: "Get this documentation page"
+        description: "Returns this page"
+        tags:
+          - Doc
+        operationId: "getDoc"
+        responses:
+          "200":
+            description: "OK"
 components:
   schemas:
     UserDTO:
