@@ -50,7 +50,7 @@ This project is a part of [JetBrains Spring Security for Java Backend Developers
 ## Endpoints
 
 This project has OpenAPI 3.0 documentation in .yaml and .html format which includes information about all api endpoints — 
-you can check it [here](https://github.com/ex-neskoro/AccountService/blob/master/src/main/resources/static/) or by going 
+you can check it [here](https://app.swaggerhub.com/apis-docs/EXNESKORO/account-service_api/1.0.0) or by going 
 to server page by "**/api/doc**" path.
 
 ## Build and run
