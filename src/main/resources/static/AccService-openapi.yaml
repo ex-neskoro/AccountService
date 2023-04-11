@@ -1,0 +1,438 @@
+openapi: "3.0.3"
+info:
+  title: "Account Service API"
+  description: "This is a OpenAPI documentation for AccService API by ex.neskoro"
+  version: "1.0.0"
+servers:
+  - url: "https://localhost:28852"
+paths:
+  /api/admin/user:
+    get:
+      summary: "Get all users"
+      description: "Return list of all users ordered by userID, ASC"
+      tags:
+        - User
+      operationId: "getAllUsers"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            'application/json':
+              schema:
+                $ref : "#/components/schemas/UserDTO"
+  /api/admin/user/access:
+    put:
+      summary: "Change user access to all of endpoints"
+      tags:
+        - User
+      operationId: "changeUserAccess"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangeUserAccessDTO"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/StatusDTO"
+        "400":
+          description: "Return 'Bad Request' if you try to block user which is Administrator"
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: "Return 'Not Found' if there is no user with such email"
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/admin/user/role:
+    put:
+      summary: "Change user roles"
+      description: "Grant or remove role from user"
+      tags:
+        - User
+      operationId: "changeUserRole"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangeUserRoleDTO"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/UserDTO"
+        "400":
+          description: "Return 'Bad Request' if you try to remove Administrator role"
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: "Return 'Not Found' if there is no user with such email"
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/admin/user/{userEmail}:
+    delete:
+      summary: "Delete user with such email"
+      description: "Deleting user with applied email"
+      tags:
+        - User
+      operationId: "deleteUser"
+      parameters:
+        - name: "userEmail"
+          in: "path"
+          required: true
+          schema:
+            type: "string"
+          example: "some.email@gmail.com"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            'application/json':
+              schema:
+                type: "object"
+                properties:
+                  user:
+                    type: "string"
+                    example: "some.email@gmail.com"
+                  status:
+                    type: "string"
+                    example: "Deleted successfully!"
+        "400":
+          description: "Return 'Bad Request' if you try to delete user with Administrator role"
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: "Return 'Not Found' if there is no user with such email"
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/auth/changepass:
+    post:
+      summary: "Change current user's password"
+      tags:
+        - Auth
+      operationId: "changeUserPass"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                new_password:
+                  type: "string"
+                  example: "newPassword"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            'application/json':
+              schema:
+                type: "object"
+                properties:
+                  email:
+                    type: "string"
+                    example: "some.email@gmail.com"
+                  status:
+                    type: "string"
+                    example: "The password has been updated successfully"
+        "400":
+          description: "Return 'Bad Request' if format of request object was incorrect. If new_password is old password. If new_password length is less than 12. If password is weak."
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/auth/signup:
+    post:
+      summary: "Register user"
+      tags:
+        - Auth
+      operationId: "signUpUser"
+      description: "Register specified user in service. First registered user gets Administrator role, others - User role. Email is case insensitive - it always converts to lower case"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                name:
+                  type: "string"
+                  example: "ex"
+                lastname:
+                  type: "string"
+                  example: "neskoro"
+                email:
+                  type: "string"
+                  example: "some.email@gmail.com"
+                password:
+                  type: "string"
+                  example: "123456123456"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/UserDTO"
+        "400":
+          description: "Return 'Bad Request' if user with specified email already exist. If password length less than 12. If password is weak."
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/security/events:
+    get:
+      summary: "Get all security events"
+      description: "Get a list of all security events ordered by eventID, ASC"
+      tags:
+        - Security
+      operationId: "getAllSecurityEvents"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            'application/json':
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/SecurityEvent"
+    delete:
+      summary: "Delete all security events"
+      tags:
+        - Security
+      operationId: "deleteAllEvents"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/StatusDTO"
+  /api/acct/payments:
+    put:
+      summary: "Change salary for specified employee and period"
+      tags:
+        - Payments
+      operationId: "updatePayments"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Payment"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/StatusDTO"
+        "400":
+          description: "Return 'Bad Request' if payment with specified employee and period not found"
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/StatusDTO"
+    post:
+      summary: "Add list of payments"
+      description: "Add payments to specified employees. Payments must be unique. Employee not able to get two or more payments in one period. This method is transactional"
+      tags:
+        - Payments
+      operationId: "addPayments"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: "array"
+              items:
+                $ref: "#/components/schemas/Payment"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/StatusDTO"
+        "400":
+          description: "Return 'Bad Request' if employee with specified email not found in any payment. If one of payments was already created."
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/Error"
+  /api/empl/payment:
+    get:
+      summary: "Get payments of authorized user"
+      description: "Get one payment of authorized user with specified period. If period parameter is absent, return all payments."
+      tags:
+        - Payments
+      operationId: "getPayment"
+      parameters:
+        - name: "period"
+          in: "query"
+          required: false
+          schema:
+            type: "string"
+            format: "MM-yyyy"
+            example: "01-2021"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            'application/json':
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/PaymentDTO"
+        "400":
+          description: "Return 'Bad Request' if payment with specified period not found."
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/Error"
+components:
+  schemas:
+    UserDTO:
+      type: "object"
+      properties:
+        id:
+          type: "integer"
+          format: "int64"
+          example: 13
+        name:
+          type: "string"
+          example: "ex"
+        lastname:
+          type: "string"
+          example: "neskoro"
+        email:
+          type: "string"
+          example: "some.email@gmail.com"
+        roles:
+          type: "array"
+          items:
+            type: "string"
+            example: "ROLE_NAME"
+    ChangeUserAccessDTO:
+      type: "object"
+      properties:
+        user:
+          type: "string"
+          example: "some.email@gmail.com"
+        operation:
+          type: "string"
+          enum:
+            - "LOCK"
+            - "UNLOCK"
+    StatusDTO:
+      type: "object"
+      properties:
+        status:
+          type: "string"
+    ChangeUserRoleDTO:
+      type: "object"
+      properties:
+        user:
+          type: "string"
+          example: "some.email@gmail.com"
+        role:
+          type: "string"
+          example: "ROLE_NAME"
+        operation:
+          type: "string"
+          enum:
+            - "GRANT"
+            - "REMOVE"
+    SecurityEvent:
+      type: "object"
+      properties:
+        action:
+          type: "string"
+          enum:
+            - "CREATE_USER"
+            - "CHANGE_PASSWORD"
+            - "ACCESS_DENIED"
+            - "LOGIN_FAILED"
+            - "GRANT_ROLE"
+            - "REMOVE_ROLE"
+            - "LOCK_USER"
+            - "UNLOCK_USER"
+            - "DELETE_USER"
+            - "BRUTE_FORCE"
+        subject:
+          type: "string"
+          example: "Anonymous"
+        object:
+          type: "string"
+          example: "some.email@gmail.com"
+        path:
+          type: "string"
+          example: "/api/auth/signup"
+    PaymentDTO:
+      type: "object"
+      properties:
+        name:
+          type: "string"
+          example: "ex"
+        lastname:
+          type: "string"
+          example: "neskoro"
+        period:
+          type: "string"
+          format: "MM-yyyy"
+          example: "March-2021"
+        salary:
+          type: "string"
+          example: "1234 dollar(s) 56 cent(s)"
+    Payment:
+      type: "object"
+      properties:
+        employee:
+          type: "string"
+          example: "some.email@gmail.com"
+        period:
+          type: "string"
+          format: "MM-yyyy"
+          example: "01-2021"
+        salary:
+          type: "integer"
+          format: "int32"
+          example: 123456
+    Error:
+      type: "object"
+      properties:
+        timestamp:
+          type: "string"
+          format: "2023-04-10T15:30:38.792+00:00"
+          example: "2023-04-10T15:30:38.792+00:00"
+        status:
+          type: "integer"
+          format: "int32"
+          example: 400
+        error:
+          type: "string"
+          example: "Bad Request"
+        message:
+          type: "string"
+          example: "Custom error message"
+        path:
+          type: "string"
+          example: "/api/path/to"

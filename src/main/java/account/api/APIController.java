@@ -52,7 +52,7 @@ public class APIController {
         return userService.operateOnRole(dto);
     }
 
-    @DeleteMapping(value = {"api/admin/user/{userEmail}", "api/admin/user"})
+    @DeleteMapping(value = {"api/admin/user/{userEmail}"})
     public ResponseEntity<?> deleteUser(@PathVariable String userEmail) {
         User user = userService.findUserByEmail(userEmail);
 

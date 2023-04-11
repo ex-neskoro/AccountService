@@ -41,7 +41,6 @@ public class ValidationException extends ResponseEntityExceptionHandler {
 
         String path = request.toString().substring(request.toString().indexOf("/"), request.toString().indexOf(";"));
 
-        // Just like a POJO, a Map is also converted to a JSON key-value structure
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", LocalDateTime.now());
         body.put("status", HttpStatus.BAD_REQUEST.value());
