@@ -5,6 +5,7 @@
   * [Description](#description)
     * [Payments](#payments)
     * [Security](#security)
+    * [SSl](#ssl)
   * [Endpoints](#endpoints)
     * [Role model](#role-model)
   * [Build and run](#build-and-run)
@@ -29,15 +30,21 @@ with that role user can:
 This project utilizes Spring Security features for managing users' permissions.
 By that, users can't reach api methods that they shouldn't be able to reach. For example, a user can only see his
 payments, but not the payments of other users, only a user with an Administrator role can lock and unlock other users,
-and so on.
+and so on. And, of course, all users' passwords hashed before saving in the database.
 
-Another security feature that Account Service has is logging various security events, such as user register, user login,
+Another security feature that Account Service has logging various security events, such as user register, user login,
 adding payments, and so on. It saves the events to the database.
 Also, you can grant an Auditor role for user — it brings him an opportunity to check all security events that happen in
 Account Service system.
 
 Account Service also has a logging-failure system that can detect brute force attack on a user account and automatically
 block that account for further inspection and unlocking by administrator.
+
+### SSl
+
+For further security enhancement, this project uses HTTPS protocol by default.
+You should only add your ssl certificate,
+and encryption will apply to all requests to service and responses from service.
 
 ---
 
@@ -66,7 +73,7 @@ In this table, you can see which role have access to which path.
 |---------------------------|-----------|------|------------|---------------|---------|
 | GET api/doc               | +         | +    | +          | +             | +       |
 | POST api/auth/signup      | +         | +    | +          | +             | +       |
-| POST api/auth/changepass  |           | +    | +          | +             | _       |
+| POST api/auth/changepass  |           | +    | +          | +             | -       |
 | GET api/empl/payment      | -         | +    | +          | -             | -       |
 | POST api/acct/payments    | -         | -    | +          | -             | -       |
 | PUT api/acct/payments     | -         | -    | +          | -             | -       |
@@ -84,7 +91,9 @@ In this table, you can see which role have access to which path.
 git clone https://github.com/ex-neskoro/AccountService.git 
 ```
 
-- You can already start the app by command
+- Add your ssl certificate **by name service.p12** to the path AccountService/src/main/resources/ssl/service.p12
+
+- You can now start the app by command
 
 ```shell
 ./gradlew bootRun

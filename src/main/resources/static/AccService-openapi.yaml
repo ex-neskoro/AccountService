@@ -19,7 +19,7 @@ paths:
           content:
             'application/json':
               schema:
-                $ref : "#/components/schemas/UserDTO"
+                $ref: "#/components/schemas/UserDTO"
   /api/admin/user/access:
     put:
       summary: "Change user access to all of endpoints"
@@ -309,15 +309,15 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
   /api/doc:
-      get:
-        summary: "Get this documentation page"
-        description: "Returns this page"
-        tags:
-          - Doc
-        operationId: "getDoc"
-        responses:
-          "200":
-            description: "OK"
+    get:
+      summary: "Get this documentation page"
+      description: "Returns this page"
+      tags:
+        - Doc
+      operationId: "getDoc"
+      responses:
+        "200":
+          description: "OK"
 components:
   schemas:
     UserDTO:
