@@ -65,6 +65,10 @@ endpoints —
 you can check it [here](https://app.swaggerhub.com/apis-docs/EXNESKORO/account-service_api/1.0.0) or by going
 to server page by "**/api/doc**" path.
 
+```text
+https://localhost:28852/api/doc
+```
+
 ### Role model
 
 In this table, you can see which role have access to which path.
